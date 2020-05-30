@@ -1,4 +1,4 @@
-package directory;
+package rpc;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -31,8 +31,7 @@ public class Server {
                     break;
                 }
                 String output = readFromPath(inputText);
-                pw.println("The output: '"+ output +  "'The name of directory is: " + inputText +
-                        "' write 'exit' if you wanna disconnect form server");
+                pw.println(output);
 //                else pw.println("Your path does't match the unix file system path");
             }
         }
@@ -40,23 +39,14 @@ public class Server {
 
     private static String readFromPath(String inputText) throws IOException {
 
-        String regexp = "(/[\\w]+)+|/"; // the custom regexp to match only Unix-like paths
         String[] commandAndArgs = inputText.split(" ");
-        String path = null;
-        for (String val: commandAndArgs) {
-            if (Pattern.matches(regexp, val))
-                path = val;
-        }
-        if (path == null)
-            return "You did not provide any path or write it in incorrect way";
 
         ProcessBuilder pb = new ProcessBuilder(commandAndArgs);
-        pb.directory(new File(path));
         Process process;
         try {
             process = pb.start();
         } catch (IOException ex) {
-            return "This path does't exist : '" + inputText;
+            return "The error during execution command: '" + inputText;
         }
 
         BufferedReader brStdout = new BufferedReader(new InputStreamReader(process.getInputStream()));
