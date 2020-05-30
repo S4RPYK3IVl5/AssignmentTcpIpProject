@@ -2,18 +2,13 @@ package directory;
 
 import java.io.*;
 import java.net.ServerSocket;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Pattern;
 
 public class Server {
 
-    private static List<String> fileList = new ArrayList<>();
-
     public static void main(String[] args) throws IOException {
 
         ServerSocket serverSocket = new ServerSocket(6868);
-        String regexp = "(/[\\w]+)+|/";
 
         while (true) {
 
@@ -35,33 +30,44 @@ public class Server {
                     pw.println("exit");
                     break;
                 }
-                if (Pattern.matches(regexp, inputText)) {
-                    String output = readFromPath(inputText);
-                    pw.println("The output: '"+ output +  "'The name of directory is: " + inputText +
-                            "' write 'exit' if you wanna disconnect form server" + " " + Pattern.matches(regexp, inputText));
-                }
-                else pw.println("Your path does't match the unix file system path");
+                String output = readFromPath(inputText);
+                pw.println("The output: '"+ output +  "'The name of directory is: " + inputText +
+                        "' write 'exit' if you wanna disconnect form server");
+//                else pw.println("Your path does't match the unix file system path");
             }
         }
     }
 
     private static String readFromPath(String inputText) throws IOException {
-        ProcessBuilder pb = new ProcessBuilder("ls");
-        pb.directory(new File(inputText));
+
+        String regexp = "(/[\\w]+)+|/"; // the custom regexp to match only Unix-like paths
+        String[] commandAndArgs = inputText.split(" ");
+        String path = null;
+        for (String val: commandAndArgs) {
+            if (Pattern.matches(regexp, val))
+                path = val;
+        }
+        if (path == null)
+            return "You did not provide any path or write it in incorrect way";
+
+        ProcessBuilder pb = new ProcessBuilder(commandAndArgs);
+        pb.directory(new File(path));
         Process process;
         try {
             process = pb.start();
         } catch (IOException ex) {
-            return "This path does't exist : " + inputText;
+            return "This path does't exist : '" + inputText;
         }
+
         BufferedReader brStdout = new BufferedReader(new InputStreamReader(process.getInputStream()));
         StringBuilder sb = new StringBuilder();
         String line;
         while((line = brStdout.readLine()) != null) {
             System.out.println("cycle: " + line);
-            sb.append(line.trim()).append(" ");
+            sb.append(line.trim()).append(" ;");
         }
         return sb.toString();
+
     }
 
 }

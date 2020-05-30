@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Client {
@@ -27,7 +28,8 @@ public class Client {
             pw.println(text);
 
             res = br.readLine();
-            System.out.println(res);
+            String[] splitedRes= res.split(";");
+            Arrays.asList(splitedRes).forEach(System.out::println);
         } while (!res.equals("exit"));
 
     }
