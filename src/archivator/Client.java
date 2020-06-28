@@ -1,11 +1,7 @@
-package rpc;
+package archivator;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class Client {
@@ -21,16 +17,26 @@ public class Client {
         var inputStream = socket.getInputStream();
         var br = new BufferedReader(new InputStreamReader(inputStream));
 
+        BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream("YOUR_FILE.zip"));
+
+        int c=0;
+        byte[] buff=new byte[6022386];
+
         String res;
         do {
-            System.out.print("Write your command: ");
+            System.out.print("Write your directory path: ");
             String text = scanner.nextLine();
             pw.println(text);
 
-            res = br.readLine();
-            String[] splitedRes= res.split(";");
-            Arrays.asList(splitedRes).forEach(System.out::println);
-        } while (!res.equals("exit"));
+            while((c=inputStream.read(buff))>0){
+                bos.write(buff, 0, c);
+            }
+            bos.close();
+
+//            res = br.readLine();
+//            System.out.println(res);
+//        } while (!res.equals("exit"));
+        } while (true);
 
     }
 }

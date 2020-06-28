@@ -5,7 +5,6 @@ import java.net.ServerSocket;
 import java.util.regex.Pattern;
 
 public class Server {
-
     public static void main(String[] args) throws IOException {
 
         ServerSocket serverSocket = new ServerSocket(6868);
@@ -59,5 +58,4 @@ public class Server {
         return sb.toString();
 
     }
-
 }
